@@ -1,20 +1,6 @@
 import axios from 'axios';
-import { API_URL } from '../../config';
 
-// Fallback to a localhost standard address if env isn't loaded (Note: Adjust to your machine's local IP for physical devices)
-const BASE_URL = API_URL || 'http://localhost:5001';
-const AUTH_BASE_URL_CANDIDATES = Array.from(
-  new Set(
-    [
-      API_URL,
-      BASE_URL,
-      'http://localhost:5001',
-      'http://127.0.0.1:5001',
-      'http://localhost:5000',
-      'http://127.0.0.1:5000',
-    ].filter(Boolean)
-  )
-);
+const BASE_URL ='https://unsaddened-stylishly-maeve.ngrok-free.dev';
 
 export const apiClient = axios.create({
   baseURL: `${BASE_URL}/api`,
@@ -73,8 +59,9 @@ export const fetchAllSlangs = async () => {
     console.error("Error fetching slangs:", error);
     throw error;
   }
-}
+};
 
+// POST slang
 export const contributeSlang = async (slangData: any) => {
   try {
     const response = await apiClient.post('/slang', slangData);
@@ -83,4 +70,4 @@ export const contributeSlang = async (slangData: any) => {
     console.error("Error contributing slang:", error);
     throw error;
   }
-}
+};
