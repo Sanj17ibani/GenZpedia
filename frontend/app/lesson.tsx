@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import QuickSearchModal from "./QuickSearchModal";
 
 const avatarMap = {
   female: [
@@ -70,6 +71,7 @@ const lessonCards = [
 export default function LessonsScreen() {
   const router = useRouter();
   const { name, gender, avatarIndex } = useLocalSearchParams();
+  const [showQuickSearch, setShowQuickSearch] = useState(false);
 
   const safeGender =
     gender === "female" || gender === "male" || gender === "prefer_not_to_say"
@@ -241,13 +243,13 @@ export default function LessonsScreen() {
             <Text style={styles.navText}>Home</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem}>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push("/dictionary")}>
             <MaterialCommunityIcons
               name="book-open-page-variant-outline"
               size={22}
-              color="#32A67C"
+              color="#999"
             />
-            <Text style={styles.activeNavText}>Dictionary</Text>
+            <Text style={styles.navText}>Dictionary</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem}>
@@ -255,11 +257,12 @@ export default function LessonsScreen() {
             <Text style={styles.navText}>Leaderboard</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem}>
+          <TouchableOpacity style={styles.navItem} onPress={() => setShowQuickSearch(true)}>
             <Feather name="search" size={22} color="#999" />
             <Text style={styles.navText}>Search</Text>
           </TouchableOpacity>
         </View>
+        <QuickSearchModal visible={showQuickSearch} onClose={() => setShowQuickSearch(false)} />
       </SafeAreaView>
     </LinearGradient>
   );

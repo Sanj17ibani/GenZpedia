@@ -9,9 +9,11 @@ import {
   ScrollView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio } from "expo-av";
+import { Ionicons } from "@expo/vector-icons";
+import { fetchAllSlangs } from "./services/api";
+import { useProgress } from "./progressContext";
 
 const correctSoundFile = require("../assets/sounds/correct.mp3");
 const wrongSoundFile = require("../assets/sounds/wrong.mp3");
@@ -38,132 +40,11 @@ const mascotImages = {
   wrong: require("../assets/images/mascot-thumbsdown.png"),
 };
 
-const questions = [
-  {
-    question: "“She thinks he likes her… that’s so ___”",
-    options: ["valid", "delulu", "mid", "sus"],
-    correctAnswer: "delulu",
-    explanation: "Means delusional (in a funny way).",
-  },
-  {
-    question: "“Bro said he invented weekends… that’s ___”",
-    options: ["cap", "valid", "slay", "mood"],
-    correctAnswer: "cap",
-    explanation: "Means it’s a lie.",
-  },
-  {
-    question: "“That outfit? You really ___ 🔥”",
-    options: ["slept", "ate", "missed", "tried"],
-    correctAnswer: "ate",
-    explanation: "Means you did amazing.",
-  },
-  {
-    question: "“I lowkey want pizza right now… that’s a ___”",
-    options: ["cap", "mood", "flop", "cringe"],
-    correctAnswer: "mood",
-    explanation: "Means relatable feeling.",
-  },
-  {
-    question: "“He’s acting kinda ___… I don’t trust him”",
-    options: ["valid", "sus", "goated", "chill"],
-    correctAnswer: "sus",
-    explanation: "Means suspicious.",
-  },
-  {
-    question: "“That movie was kinda ___, not worth the hype”",
-    options: ["goated", "mid", "slay", "valid"],
-    correctAnswer: "mid",
-    explanation: "Means average.",
-  },
-  {
-    question: "“She walked in and totally ___ 💅”",
-    options: ["slayed", "failed", "paused", "dipped"],
-    correctAnswer: "slayed",
-    explanation: "Means did amazing/confident.",
-  },
-  {
-    question: "“I’m being serious, no ___”",
-    options: ["joke", "cap", "vibe", "slay"],
-    correctAnswer: "cap",
-    explanation: "Means “no lie”.",
-  },
-  {
-    question: "“That guy has insane ___”",
-    options: ["energy", "rizz", "style", "luck"],
-    correctAnswer: "rizz",
-    explanation: "Means charm/flirting skill.",
-  },
-  {
-    question: "“That excuse is not ___ bro”",
-    options: ["valid", "mid", "sus", "goated"],
-    correctAnswer: "valid",
-    explanation: "Means acceptable/reasonable.",
-  },
-  {
-    question: "“He’s texting her 24/7… bro is a ___”",
-    options: ["king", "simp", "boss", "legend"],
-    correctAnswer: "simp",
-    explanation: "Overly obsessed with someone.",
-  },
-  {
-    question: "“She really said that out loud… that’s ___ 😭”",
-    options: ["iconic", "cringe", "goated", "valid"],
-    correctAnswer: "cringe",
-    explanation: "Means embarrassing.",
-  },
-  {
-    question: "“I’m ___ excited for this movie (not saying it loudly)”",
-    options: ["highkey", "lowkey", "mid", "sus"],
-    correctAnswer: "lowkey",
-    explanation: "Means secretly/kind of.",
-  },
-  {
-    question: "“I’m ___ obsessed with this song 🔥”",
-    options: ["lowkey", "highkey", "mid", "sus"],
-    correctAnswer: "highkey",
-    explanation: "Means strongly/openly.",
-  },
-  {
-    question: "“That comeback was ___ 🔥”",
-    options: ["weak", "goated", "cringe", "mid"],
-    correctAnswer: "goated",
-    explanation: "Means legendary/best.",
-  },
-  {
-    question: "“Spill the ___ 👀”",
-    options: ["water", "tea", "vibe", "story"],
-    correctAnswer: "tea",
-    explanation: "Means gossip.",
-  },
-  {
-    question: "“He just stands there doing nothing… total ___”",
-    options: ["NPC", "king", "hero", "boss"],
-    correctAnswer: "NPC",
-    explanation: "Someone acting basic/robotic.",
-  },
-  {
-    question: "“That joke was so bad… ___ 💀”",
-    options: ["slay", "bruh", "goated", "valid"],
-    correctAnswer: "bruh",
-    explanation: "Used for disbelief/disappointment.",
-  },
-  {
-    question: "“This playlist is ___ 🔥 I love it”",
-    options: ["mid", "fire", "sus", "cringe"],
-    correctAnswer: "fire",
-    explanation: "Means really good.",
-  },
-  {
-    question: "“He cancelled last minute… that’s ___ behavior”",
-    options: ["elite", "clown", "goated", "valid"],
-    correctAnswer: "clown",
-    explanation: "Means foolish behavior.",
-  },
-];
 
 export default function SlangItInScreen() {
   const router = useRouter();
   const { name, gender, avatarIndex } = useLocalSearchParams();
+  const { addXp, addGoalProgress } = useProgress();
   const scrollRef = useRef<ScrollView>(null);
 
   const [correctSound, setCorrectSound] = useState<Audio.Sound | null>(null);
@@ -187,19 +68,21 @@ export default function SlangItInScreen() {
   const [score, setScore] = useState(0);
   const [xp, setXp] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const currentQuestion = questions[currentQuestionIndex];
 
   const isCorrect = useMemo(() => {
-    if (!selectedOption) return false;
+    if (!selectedOption || !currentQuestion) return false;
     return selectedOption === currentQuestion.correctAnswer;
   }, [selectedOption, currentQuestion]);
 
   const mascotSource = !selectedOption
     ? mascotImages.default
     : isCorrect
-    ? mascotImages.correct
-    : mascotImages.wrong;
+      ? mascotImages.correct
+      : mascotImages.wrong;
 
   useEffect(() => {
     let mounted = true;
@@ -230,6 +113,64 @@ export default function SlangItInScreen() {
     };
 
     loadSounds();
+
+    const loadQuestions = async () => {
+      try {
+        const data = await fetchAllSlangs();
+        if (data && data.length > 0) {
+          const fetchedSlangs = data.sort(() => 0.5 - Math.random());
+          const generated = fetchedSlangs.slice(0, 5).map((slang: any) => {
+            const word = slang.word;
+            const example = slang.example && slang.example.length > 0 ? slang.example[0] : `This is so ${word}`;
+
+            let questionText = example.replace(new RegExp(`\\b${word}\\b`, 'gi'), '___');
+            if (questionText === example) {
+              questionText = example.replace(new RegExp(word, 'gi'), '___');
+            }
+            if (questionText === example) {
+              questionText = `What is a common scenario for ___ (meaning: ${slang.meaning})?`;
+            }
+
+            const others = data.filter((s: any) => s._id !== slang._id);
+            const falseOptions = others.sort(() => 0.5 - Math.random()).slice(0, 3).map((s: any) => s.word);
+            while (falseOptions.length < 3) {
+              falseOptions.push(Math.random().toString(36).substring(7));
+            }
+            const options = [...falseOptions, word].sort(() => 0.5 - Math.random());
+
+            return {
+              question: `"${questionText}"`,
+              options,
+              correctAnswer: word,
+              explanation: slang.meaning,
+            };
+          });
+          setQuestions(generated.length > 0 ? generated : [{
+            question: "“She thinks he likes her… that’s so ___”",
+            options: ["valid", "delulu", "mid", "sus"],
+            correctAnswer: "delulu",
+            explanation: "Means delusional.",
+          }]);
+        } else {
+          setQuestions([{
+            question: "“She thinks he likes her… that’s so ___”",
+            options: ["valid", "delulu", "mid", "sus"],
+            correctAnswer: "delulu",
+            explanation: "Means delusional.",
+          }]);
+        }
+      } catch (err) {
+        setQuestions([{
+          question: "“She thinks he likes her… that’s so ___”",
+          options: ["valid", "delulu", "mid", "sus"],
+          correctAnswer: "delulu",
+          explanation: "Means delusional.",
+        }]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuestions();
 
     return () => {
       mounted = false;
@@ -288,6 +229,7 @@ export default function SlangItInScreen() {
         scrollRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       }, 100);
     } else {
+      addGoalProgress(25);
       setQuizFinished(true);
 
       setTimeout(() => {
@@ -472,104 +414,110 @@ export default function SlangItInScreen() {
               </Text>
             </View>
 
-            <View style={styles.questionCard}>
-              <View style={styles.questionTopRow}>
-                <Image source={mascotSource} style={styles.mascotImage} />
+            {loading || questions.length === 0 ? (
+              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Text>Loading questions...</Text>
+              </View>
+            ) : (
+              <View style={styles.questionCard}>
+                <View style={styles.questionTopRow}>
+                  <Image source={mascotSource} style={styles.mascotImage} />
 
-                <View style={styles.badgeRow}>
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>⚡ +10 XP</Text>
-                  </View>
-                  <View style={styles.badgePurple}>
-                    <Text style={styles.badgeText}>📝 Fill Mode</Text>
+                  <View style={styles.badgeRow}>
+                    <View style={styles.badge}>
+                      <Text style={styles.badgeText}>⚡ +10 XP</Text>
+                    </View>
+                    <View style={styles.badgePurple}>
+                      <Text style={styles.badgeText}>📝 Fill Mode</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
 
-              <Text style={styles.questionText}>{currentQuestion.question}</Text>
+                <Text style={styles.questionText}>{currentQuestion.question}</Text>
 
-              <View style={styles.optionsWrapper}>
-                {currentQuestion.options.map((option, index) => {
-                  const optionLetter = String.fromCharCode(65 + index);
-                  const isSelected = selectedOption === option;
-                  const isAnswerCorrect = option === currentQuestion.correctAnswer;
+                <View style={styles.optionsWrapper}>
+                  {currentQuestion.options.map((option: string, index: number) => {
+                    const optionLetter = String.fromCharCode(65 + index);
+                    const isSelected = selectedOption === option;
+                    const isAnswerCorrect = option === currentQuestion.correctAnswer;
 
-                  return (
-                    <TouchableOpacity
-                      key={option}
-                      style={[
-                        styles.optionButton,
-                        selectedOption &&
+                    return (
+                      <TouchableOpacity
+                        key={option}
+                        style={[
+                          styles.optionButton,
+                          selectedOption &&
                           isAnswerCorrect &&
                           styles.correctOption,
-                        selectedOption &&
+                          selectedOption &&
                           isSelected &&
                           !isAnswerCorrect &&
                           styles.wrongOption,
-                      ]}
-                      onPress={() => handleOptionPress(option)}
-                      activeOpacity={0.85}
-                    >
-                      <View style={styles.optionLeft}>
-                        <View style={styles.optionLetterCircle}>
-                          <Text style={styles.optionLetter}>{optionLetter}</Text>
+                        ]}
+                        onPress={() => handleOptionPress(option)}
+                        activeOpacity={0.85}
+                      >
+                        <View style={styles.optionLeft}>
+                          <View style={styles.optionLetterCircle}>
+                            <Text style={styles.optionLetter}>{optionLetter}</Text>
+                          </View>
+                          <Text style={styles.optionText}>{option}</Text>
                         </View>
-                        <Text style={styles.optionText}>{option}</Text>
-                      </View>
 
-                      {selectedOption && isAnswerCorrect && (
-                        <Ionicons
-                          name="checkmark-circle"
-                          size={22}
-                          color="#1F9D55"
-                        />
-                      )}
+                        {selectedOption && isAnswerCorrect && (
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={22}
+                            color="#1F9D55"
+                          />
+                        )}
 
-                      {selectedOption && isSelected && !isAnswerCorrect && (
-                        <Ionicons
-                          name="close-circle"
-                          size={22}
-                          color="#D64545"
-                        />
-                      )}
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-
-              {showExplanation && (
-                <View
-                  style={[
-                    styles.explanationBox,
-                    isCorrect
-                      ? styles.explanationCorrect
-                      : styles.explanationWrong,
-                  ]}
-                >
-                  <Text style={styles.resultText}>
-                    {isCorrect ? "✅ Correct! +10 XP" : "❌ Wrong answer"}
-                  </Text>
-                  <Text style={styles.answerText}>
-                    Answer: {currentQuestion.correctAnswer}
-                  </Text>
-                  <Text style={styles.explanationText}>
-                    {currentQuestion.explanation}
-                  </Text>
-
-                  <TouchableOpacity
-                    style={styles.nextButton}
-                    onPress={handleNext}
-                  >
-                    <Text style={styles.nextButtonText}>
-                      {currentQuestionIndex === questions.length - 1
-                        ? "See Results"
-                        : "Next Question"}
-                    </Text>
-                    <Ionicons name="arrow-forward" size={18} color="#fff" />
-                  </TouchableOpacity>
+                        {selectedOption && isSelected && !isAnswerCorrect && (
+                          <Ionicons
+                            name="close-circle"
+                            size={22}
+                            color="#D64545"
+                          />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
                 </View>
-              )}
-            </View>
+
+                {showExplanation && (
+                  <View
+                    style={[
+                      styles.explanationBox,
+                      isCorrect
+                        ? styles.explanationCorrect
+                        : styles.explanationWrong,
+                    ]}
+                  >
+                    <Text style={styles.resultText}>
+                      {isCorrect ? "✅ Correct! +10 XP" : "❌ Wrong answer"}
+                    </Text>
+                    <Text style={styles.answerText}>
+                      Answer: {currentQuestion.correctAnswer}
+                    </Text>
+                    <Text style={styles.explanationText}>
+                      {currentQuestion.explanation}
+                    </Text>
+
+                    <TouchableOpacity
+                      style={styles.nextButton}
+                      onPress={handleNext}
+                    >
+                      <Text style={styles.nextButtonText}>
+                        {currentQuestionIndex === questions.length - 1
+                          ? "See Results"
+                          : "Next Question"}
+                      </Text>
+                      <Ionicons name="arrow-forward" size={18} color="#fff" />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>

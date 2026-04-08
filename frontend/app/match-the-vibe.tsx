@@ -12,6 +12,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio } from "expo-av";
+import { fetchAllSlangs } from "./services/api";
+import { useProgress } from "./progressContext";
+
 
 const correctSoundFile = require("../assets/sounds/correct.mp3");
 const wrongSoundFile = require("../assets/sounds/wrong.mp3");
@@ -38,26 +41,6 @@ const mascotImages = {
   wrong: require("../assets/images/mascot-thumbsdown.png"),
 };
 
-const pairs = [
-  { word: "Yapping", meaning: "Talking too much" },
-  { word: "Bruh", meaning: "Disbelief / disappointment" },
-  { word: "It’s Giving", meaning: "Has the vibe of" },
-  { word: "Main Character", meaning: "Acting like the center of everything" },
-  { word: "Side Eye", meaning: "Judgy look" },
-  { word: "Shook", meaning: "Shocked / surprised" },
-  { word: "Bet", meaning: "Okay / agreed" },
-  { word: "Mood", meaning: "Very relatable" },
-  { word: "Lowkey", meaning: "Secretly / kind of" },
-  { word: "Highkey", meaning: "Strongly / openly" },
-  { word: "Caught in 4K", meaning: "Clearly exposed" },
-  { word: "Rent Free", meaning: "Stuck in your head" },
-  { word: "Core", meaning: "Specific aesthetic / vibe" },
-  { word: "Serving", meaning: "Giving strong energy / look" },
-  { word: "Screaming", meaning: "Extremely funny / dramatic" },
-  { word: "Soft Launch", meaning: "Hinting at relationship online" },
-  { word: "Hard Launch", meaning: "Officially revealing relationship" },
-  { word: "Situationship", meaning: "Unclear romantic connection" },
-];
 
 function shuffleArray<T>(array: T[]) {
   const copy = [...array];
@@ -71,6 +54,10 @@ function shuffleArray<T>(array: T[]) {
 export default function MatchTheVibeScreen() {
   const router = useRouter();
   const { name, gender, avatarIndex } = useLocalSearchParams();
+  const { addXp, addGoalProgress } = useProgress();
+
+  const [pairs, setPairs] = useState<{ word: string, meaning: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [correctSound, setCorrectSound] = useState<Audio.Sound | null>(null);
   const [wrongSound, setWrongSound] = useState<Audio.Sound | null>(null);
@@ -104,15 +91,37 @@ export default function MatchTheVibeScreen() {
 
   const shuffledMeanings = useMemo(
     () => shuffleArray(pairs.map((item) => item.meaning)),
-    []
+    [pairs]
   );
+
+  useEffect(() => {
+    const loadPairs = async () => {
+      try {
+        const data = await fetchAllSlangs();
+        if (data && data.length > 0) {
+          const fetchedPairs = data
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 5) // 5 random words
+            .map((s: any) => ({ word: s.word, meaning: s.meaning }));
+          setPairs(fetchedPairs.length > 0 ? fetchedPairs : [{ word: "Yapping", meaning: "Talking too much" }]);
+        } else {
+          setPairs([{ word: "Yapping", meaning: "Talking too much" }]);
+        }
+      } catch (e) {
+        setPairs([{ word: "Error", meaning: "Failed to load db" }]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPairs();
+  }, []);
 
   const mascotSource =
     feedbackType === "correct"
       ? mascotImages.correct
       : feedbackType === "wrong"
-      ? mascotImages.wrong
-      : mascotImages.default;
+        ? mascotImages.wrong
+        : mascotImages.default;
 
   useEffect(() => {
     let mounted = true;
@@ -177,6 +186,7 @@ export default function MatchTheVibeScreen() {
 
         const newMatchedCount = matchedWords.length + 1;
         if (newMatchedCount === pairs.length) {
+          addGoalProgress(25);
           setTimeout(() => {
             setQuizFinished(true);
           }, 700);
@@ -386,78 +396,84 @@ export default function MatchTheVibeScreen() {
               </View>
             ) : null}
 
-            <View style={styles.columnsRow}>
-              <View style={styles.column}>
-                <Text style={styles.columnTitle}>Words</Text>
-                <ScrollView
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={styles.columnList}
-                >
-                  {pairs.map((item, index) => {
-                    const isMatched = matchedWords.includes(item.word);
-                    const isSelected = selectedWord === item.word;
-
-                    return (
-                      <TouchableOpacity
-                        key={`${item.word}-${index}`}
-                        disabled={isMatched}
-                        style={[
-                          styles.matchItem,
-                          isMatched && styles.matchedItem,
-                          isSelected && styles.selectedItem,
-                        ]}
-                        onPress={() => setSelectedWord(item.word)}
-                      >
-                        <Text
-                          style={[
-                            styles.matchItemText,
-                            isMatched && styles.matchedItemText,
-                          ]}
-                        >
-                          {item.word}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
+            {loading ? (
+              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Text>Loading matches...</Text>
               </View>
+            ) : (
+              <View style={styles.columnsRow}>
+                <View style={styles.column}>
+                  <Text style={styles.columnTitle}>Words</Text>
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.columnList}
+                  >
+                    {pairs.map((item, index) => {
+                      const isMatched = matchedWords.includes(item.word);
+                      const isSelected = selectedWord === item.word;
 
-              <View style={styles.column}>
-                <Text style={styles.columnTitle}>Meanings</Text>
-                <ScrollView
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={styles.columnList}
-                >
-                  {shuffledMeanings.map((meaning, index) => {
-                    const isMatched = matchedMeanings.includes(meaning);
-                    const isSelected = selectedMeaning === meaning;
-
-                    return (
-                      <TouchableOpacity
-                        key={`${meaning}-${index}`}
-                        disabled={isMatched}
-                        style={[
-                          styles.matchItem,
-                          styles.meaningItem,
-                          isMatched && styles.matchedItem,
-                          isSelected && styles.selectedItem,
-                        ]}
-                        onPress={() => setSelectedMeaning(meaning)}
-                      >
-                        <Text
+                      return (
+                        <TouchableOpacity
+                          key={`${item.word}-${index}`}
+                          disabled={isMatched}
                           style={[
-                            styles.matchItemText,
-                            isMatched && styles.matchedItemText,
+                            styles.matchItem,
+                            isMatched && styles.matchedItem,
+                            isSelected && styles.selectedItem,
                           ]}
+                          onPress={() => setSelectedWord(item.word)}
                         >
-                          {meaning}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
+                          <Text
+                            style={[
+                              styles.matchItemText,
+                              isMatched && styles.matchedItemText,
+                            ]}
+                          >
+                            {item.word}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
+                </View>
+
+                <View style={styles.column}>
+                  <Text style={styles.columnTitle}>Meanings</Text>
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.columnList}
+                  >
+                    {shuffledMeanings.map((meaning, index) => {
+                      const isMatched = matchedMeanings.includes(meaning);
+                      const isSelected = selectedMeaning === meaning;
+
+                      return (
+                        <TouchableOpacity
+                          key={`${meaning}-${index}`}
+                          disabled={isMatched}
+                          style={[
+                            styles.matchItem,
+                            styles.meaningItem,
+                            isMatched && styles.matchedItem,
+                            isSelected && styles.selectedItem,
+                          ]}
+                          onPress={() => setSelectedMeaning(meaning)}
+                        >
+                          <Text
+                            style={[
+                              styles.matchItemText,
+                              isMatched && styles.matchedItemText,
+                            ]}
+                          >
+                            {meaning}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
+                </View>
               </View>
-            </View>
+            )}
           </View>
         </View>
       </SafeAreaView>

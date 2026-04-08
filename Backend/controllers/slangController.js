@@ -1,4 +1,5 @@
 const Slang = require('../models/slangModel');
+const User = require('../models/userModel');
 const asyncHandler = require('../middleware/asyncHandler');
 
 const createSlang = asyncHandler(async (req, res) => {
@@ -41,10 +42,48 @@ const deleteSlang = asyncHandler(async (req, res) => {
   res.json({ message: 'Slang deleted', id: slang._id });
 });
 
+const checkAnswer = asyncHandler(async (req, res) => {
+  const { slangId, selectedAnswer } = req.body;
+
+  const slang = await Slang.findById(slangId);
+  const user = await User.findById(req.user.id);
+
+  if (!slang) {
+    res.status(404);
+    throw new Error('Slang not found');
+  }
+
+  let correct = false;
+
+  if (slang.meaning === selectedAnswer) {
+    correct = true;
+
+    user.xp += 10;
+    user.streak += 1;
+
+    if (user.xp >= 100) {
+      user.level += 1;
+      user.xp = 0;
+    }
+  } else {
+    user.streak = 0;
+  }
+
+  await user.save();
+
+  res.json({
+    correct,
+    xp: user.xp,
+    level: user.level,
+    streak: user.streak,
+  });
+});
+
 module.exports = {
   createSlang,
   getSlangs,
   getSlangById,
   updateSlang,
   deleteSlang,
+  checkAnswer,
 };

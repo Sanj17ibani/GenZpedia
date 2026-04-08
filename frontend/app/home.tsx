@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import {
+  Modal,
   View,
   Text,
   StyleSheet,
@@ -7,42 +8,49 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Pressable,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useProgress } from "./progressContext";
+import QuickSearchModal from "./QuickSearchModal";
+import { avatarMap } from "./avatarData";
 
-const avatarMap = {
-  female: [
-    require("../assets/images/female1.png"),
-    require("../assets/images/female2.png"),
-    require("../assets/images/female3.png"),
-    require("../assets/images/female4.png"),
-  ],
-  male: [
-    require("../assets/images/male1.png"),
-    require("../assets/images/male2.png"),
-    require("../assets/images/male3.png"),
-    require("../assets/images/male4.png"),
-  ],
-  prefer_not_to_say: [require("../assets/images/prefer_not.png")],
-} as const;
+const DAILY_GOAL_PROGRESS = 72;
 
 export default function HomeScreen() {
   const { name, gender, avatarIndex } = useLocalSearchParams();
   const router = useRouter();
+  const [showQuickSearch, setShowQuickSearch] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const { xp, profile, logout } = useProgress();
 
-  const safeGender =
+  const paramName = typeof name === "string" ? name : "";
+  const fallbackGender =
     gender === "female" || gender === "male" || gender === "prefer_not_to_say"
       ? gender
-      : "prefer_not_to_say";
+      : profile.gender;
+  const safeGender = profile.gender || fallbackGender || "prefer_not_to_say";
 
-  const safeAvatarIndex = Number(avatarIndex) || 0;
+  const fallbackAvatarIndex = Number(avatarIndex) || 0;
+  const safeAvatarIndex = typeof profile.avatarIndex === "number" ? profile.avatarIndex : fallbackAvatarIndex;
 
   const selectedProfileImage =
     avatarMap[safeGender][safeAvatarIndex] || avatarMap.prefer_not_to_say[0];
 
-  const displayName = name ? String(name).toUpperCase() : "USER";
+  const profileName = profile.name?.trim() || paramName || "User";
+  const emailText = profile.email?.trim() || "No email available";
+  const displayName = profileName.toUpperCase();
+  const currentLevel = Math.floor(xp / 100) + 1;
+  const xpPercent = xp % 100;
+
+  const handleLogout = () => {
+    logout();
+    setShowSidebar(false);
+    router.replace("/");
+  };
 
   return (
     <LinearGradient
@@ -87,33 +95,37 @@ export default function HomeScreen() {
               <Image source={selectedProfileImage} style={styles.profileImage} />
 
               <View style={styles.levelBox}>
-                <Text style={styles.levelText}>Level 10</Text>
+                <Text style={styles.levelText}>Level {currentLevel}</Text>
                 <View style={styles.xpBarBg}>
-                  <View style={styles.xpBarFill} />
+                  <View style={[styles.xpBarFill, { width: `${xpPercent}%` }]} />
                 </View>
-                <Text style={styles.xpText}>2,450 XP</Text>
+                <Text style={styles.xpText}>{xp} XP</Text>
               </View>
             </View>
 
-            <TouchableOpacity style={styles.menuButton}>
+            <TouchableOpacity style={styles.menuButton} onPress={() => setShowSidebar(true)}>
               <Feather name="menu" size={24} color="#222" />
             </TouchableOpacity>
           </View>
 
           <Text style={styles.welcomeText}>{`WELCOME BACK ${displayName}!`}</Text>
 
-          <View style={styles.goalCard}>
+          <TouchableOpacity
+            style={styles.goalCard}
+            activeOpacity={0.9}
+            onPress={() => router.push("/daily-goal")}
+          >
             <Text style={styles.goalTitle}>Daily Goal</Text>
 
             <View style={styles.goalProgressWrapper}>
               <View style={styles.goalProgressBg}>
-                <View style={styles.goalProgressFill} />
+                <View style={[styles.goalProgressFill, { width: `${DAILY_GOAL_PROGRESS}%` }]} />
               </View>
-              <Text style={styles.goalPercent}>70% complete</Text>
+              <Text style={styles.goalPercent}>{DAILY_GOAL_PROGRESS}% complete</Text>
             </View>
 
             <Text style={styles.giftEmoji}>🎁</Text>
-          </View>
+          </TouchableOpacity>
 
           <View style={styles.cardGrid}>
             <TouchableOpacity
@@ -267,7 +279,7 @@ export default function HomeScreen() {
             <Text style={styles.activeNavText}>Home</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem}>
+          <TouchableOpacity style={styles.navItem} onPress={() => router.push("/dictionary")}>
             <MaterialCommunityIcons
               name="book-open-page-variant-outline"
               size={22}
@@ -293,11 +305,59 @@ export default function HomeScreen() {
             <Text style={styles.navText}>Leaderboard</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem}>
+          <TouchableOpacity style={styles.navItem} onPress={() => setShowQuickSearch(true)}>
             <Feather name="search" size={22} color="#999" />
             <Text style={styles.navText}>Search</Text>
           </TouchableOpacity>
         </View>
+        <QuickSearchModal visible={showQuickSearch} onClose={() => setShowQuickSearch(false)} />
+
+        <Modal
+          visible={showSidebar}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowSidebar(false)}
+        >
+          <View style={styles.sidebarOverlay}>
+            <Pressable style={styles.sidebarBackdrop} onPress={() => setShowSidebar(false)} />
+            <View style={styles.sidebarPanel}>
+              <View style={styles.sidebarTopRow}>
+                <Text style={styles.sidebarTitle}>Your Profile</Text>
+                <TouchableOpacity onPress={() => setShowSidebar(false)}>
+                  <Ionicons name="close" size={24} color="#222" />
+                </TouchableOpacity>
+              </View>
+
+              <Image source={selectedProfileImage} style={styles.sidebarAvatar} />
+              <Text style={styles.sidebarName}>{profileName}</Text>
+              <Text style={styles.sidebarEmail}>{emailText}</Text>
+
+              <TouchableOpacity
+                style={styles.sidebarAction}
+                onPress={() => {
+                  setShowSidebar(false);
+                  router.push("/settings");
+                }}
+              >
+                <Ionicons name="settings-outline" size={20} color="#333" />
+                <Text style={styles.sidebarActionText}>Settings</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.sidebarAction}
+                onPress={() => Alert.alert("Language", "English is currently selected.")}
+              >
+                <Ionicons name="language-outline" size={20} color="#333" />
+                <Text style={styles.sidebarActionText}>Language</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={[styles.sidebarAction, styles.logoutAction]} onPress={handleLogout}>
+                <Ionicons name="log-out-outline" size={20} color="#B94B67" />
+                <Text style={styles.logoutText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -708,5 +768,91 @@ const styles = StyleSheet.create({
     color: "#32A67C",
     marginTop: 4,
     fontWeight: "700",
+  },
+
+  sidebarOverlay: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: "rgba(17,17,17,0.18)",
+  },
+
+  sidebarBackdrop: {
+    flex: 1,
+  },
+
+  sidebarPanel: {
+    width: "78%",
+    backgroundColor: "#FFF9FC",
+    paddingTop: 56,
+    paddingHorizontal: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.14,
+    shadowRadius: 14,
+    elevation: 10,
+  },
+
+  sidebarTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 24,
+  },
+
+  sidebarTitle: {
+    fontSize: 22,
+    fontWeight: "900",
+    color: "#171717",
+  },
+
+  sidebarAvatar: {
+    width: 92,
+    height: 92,
+    borderRadius: 46,
+    borderWidth: 3,
+    borderColor: "#FFFFFF",
+    marginBottom: 14,
+  },
+
+  sidebarName: {
+    fontSize: 22,
+    fontWeight: "900",
+    color: "#161616",
+    marginBottom: 4,
+  },
+
+  sidebarEmail: {
+    fontSize: 13,
+    color: "#6A6A6A",
+    fontWeight: "600",
+    marginBottom: 26,
+  },
+
+  sidebarAction: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F7F1FB",
+    borderRadius: 18,
+    paddingVertical: 15,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+
+  sidebarActionText: {
+    marginLeft: 12,
+    fontSize: 15,
+    fontWeight: "800",
+    color: "#333",
+  },
+
+  logoutAction: {
+    marginTop: 10,
+    backgroundColor: "#FCE9EE",
+  },
+
+  logoutText: {
+    marginLeft: 12,
+    fontSize: 15,
+    fontWeight: "900",
+    color: "#B94B67",
   },
 });

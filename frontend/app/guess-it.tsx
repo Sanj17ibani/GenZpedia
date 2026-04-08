@@ -216,8 +216,8 @@ export default function GuessItScreen() {
   const mascotSource = !selectedOption
     ? mascotImages.default
     : isCorrect
-    ? mascotImages.correct
-    : mascotImages.wrong;
+      ? mascotImages.correct
+      : mascotImages.wrong;
 
   useEffect(() => {
     let mounted = true;
@@ -507,9 +507,9 @@ export default function GuessItScreen() {
                         styles.optionButton,
                         selectedOption && isAnswerCorrect && styles.correctOption,
                         selectedOption &&
-                          isSelected &&
-                          !isAnswerCorrect &&
-                          styles.wrongOption,
+                        isSelected &&
+                        !isAnswerCorrect &&
+                        styles.wrongOption,
                       ]}
                       onPress={() => handleOptionPress(option)}
                       activeOpacity={0.85}

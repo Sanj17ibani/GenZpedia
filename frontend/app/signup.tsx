@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -10,36 +9,60 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import axios from "axios";
+import { useProgress } from "./progressContext";
+import { signupUser } from "./services/api";
 
 export default function Signup() {
   const router = useRouter();
+  const { updateProfile } = useProgress();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSignup = async () => {
-    try {
-      const res = await axios.post(
-        "https://unsaddened-stylishly-maeve.ngrok-free.dev/api/auth/signup",
-        {
-          name,
-          email,
-          password,
-        }
-      );
+    if (isSubmitting) return;
 
-      Alert.alert("Success", res.data.message || "Signup successful");
-      router.push("/avatar");
+    setIsSubmitting(true);
+    try {
+      const res = await signupUser(name, email, password);
+      const user = res.user;
+
+      updateProfile({
+        name: user?.name || name,
+        email: user?.email || email,
+        password,
+        gender: "prefer_not_to_say",
+        avatarIndex: 0,
+      });
+
+      Alert.alert("Success", res.message || "Signup successful");
+      router.push({
+        pathname: "/avatar",
+        params: {
+          name,
+        },
+      });
     } catch (err: any) {
       console.log("SIGNUP ERROR:", err?.response?.data || err?.message || err);
+
+      const isNetworkError =
+        !err?.response &&
+        (err?.code === "ECONNABORTED" ||
+          err?.message?.includes("Network Error") ||
+          err?.message?.includes("timeout"));
+
       Alert.alert(
         "Signup failed",
-        err?.response?.data?.message ||
-          err?.message ||
-          "Something went wrong"
+        isNetworkError
+          ? "Couldn't reach the backend. Make sure your server is running on port 5001."
+          : err?.response?.data?.message ||
+              err?.message ||
+              "Something went wrong"
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,8 +105,14 @@ export default function Signup() {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>SIGN UP</Text>
+      <TouchableOpacity
+        style={[styles.button, isSubmitting && styles.disabledButton]}
+        onPress={handleSignup}
+        disabled={isSubmitting}
+      >
+        <Text style={styles.buttonText}>
+          {isSubmitting ? "SIGNING UP..." : "SIGN UP"}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.back()}>
@@ -128,6 +157,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontWeight: "700",
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
   backText: {
     marginTop: 20,

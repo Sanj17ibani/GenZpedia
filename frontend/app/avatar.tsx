@@ -10,33 +10,22 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, useLocalSearchParams } from "expo-router";
-
-const avatars = {
-  female: [
-    require("../assets/images/female1.png"),
-    require("../assets/images/female2.png"),
-    require("../assets/images/female3.png"),
-    require("../assets/images/female4.png"),
-  ],
-  male: [
-    require("../assets/images/male1.png"),
-    require("../assets/images/male2.png"),
-    require("../assets/images/male3.png"),
-    require("../assets/images/male4.png"),
-  ],
-  prefer_not_to_say: [require("../assets/images/prefer_not.png")],
-};
+import { avatarMap, AvatarGender } from "./avatarData";
+import { useProgress } from "./progressContext";
 
 export default function AvatarSelection() {
   const router = useRouter();
   const { name } = useLocalSearchParams();
+  const { profile, updateProfile } = useProgress();
 
-  const [gender, setGender] = useState<"female" | "male" | "prefer_not_to_say">(
-    "prefer_not_to_say"
+  const [gender, setGender] = useState<AvatarGender>(
+    profile.gender || "prefer_not_to_say"
   );
-  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(
+    profile.avatarIndex ?? null
+  );
 
-  const currentAvatars = avatars[gender];
+  const currentAvatars = avatarMap[gender];
 
   const handleContinue = () => {
     if (selectedAvatar === null) {
@@ -44,10 +33,16 @@ export default function AvatarSelection() {
       return;
     }
 
+    updateProfile({
+      name: String(name || profile.name || "User"),
+      gender,
+      avatarIndex: selectedAvatar,
+    });
+
     router.push({
       pathname: "/home",
       params: {
-        name: String(name || "User"),
+        name: String(name || profile.name || "User"),
         gender,
         avatarIndex: String(selectedAvatar),
       },
