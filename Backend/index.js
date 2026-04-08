@@ -66,3 +66,4 @@ start().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+console.log(process.env.MONGO_URI);

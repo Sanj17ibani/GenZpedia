@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -10,25 +9,33 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import axios from "axios";
+import { useProgress } from "./progressContext";
+import { loginUser } from "./services/api";
 
 export default function Login() {
   const router = useRouter();
+  const { updateProfile } = useProgress();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async () => {
-  try {
-    const res = await axios.post(
-      "https://unsaddened-stylishly-maeve.ngrok-free.dev/api/auth/login",
-      {
-        email,
-        password,
-      }
-    );
+  if (isSubmitting) return;
 
-    const user = res.data.user;
+  setIsSubmitting(true);
+  try {
+    const res = await loginUser(email, password);
+
+    const user = res.user;
+
+    updateProfile({
+      name: user.name,
+      email: user.email,
+      gender: "prefer_not_to_say",
+      avatarIndex: 0,
+      password,
+    });
 
     // Navigate to home with user data
     router.push({
@@ -43,10 +50,20 @@ export default function Login() {
   } catch (err: any) {
     console.log("LOGIN ERROR:", err?.response?.data || err?.message);
 
+    const isNetworkError =
+      !err?.response &&
+      (err?.code === "ECONNABORTED" ||
+        err?.message?.includes("Network Error") ||
+        err?.message?.includes("timeout"));
+
     Alert.alert(
       "Login failed",
-      err?.response?.data?.message || "Invalid credentials"
+      isNetworkError
+        ? "Couldn't reach the backend. Make sure your server is running on port 5001."
+        : err?.response?.data?.message || "Invalid credentials"
     );
+  } finally {
+    setIsSubmitting(false);
   }
 };
 
@@ -81,8 +98,14 @@ export default function Login() {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginText}>LOGIN</Text>
+      <TouchableOpacity
+        style={[styles.loginButton, isSubmitting && styles.disabledButton]}
+        onPress={handleLogin}
+        disabled={isSubmitting}
+      >
+        <Text style={styles.loginText}>
+          {isSubmitting ? "LOGGING IN..." : "LOGIN"}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.back()}>
@@ -128,6 +151,9 @@ const styles = StyleSheet.create({
   loginText: {
     color: "#fff",
     fontWeight: "700",
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
   backText: {
     textAlign: "center",

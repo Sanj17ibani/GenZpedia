@@ -1,0 +1,441 @@
+﻿[
+    {
+        "_id":  "69d696850fcb164d5f02e49a",
+        "word":  "69",
+        "meaning":  "Sexual activity",
+        "tone":  "Vulgur",
+        "example":  [
+                        "Let\u0027s do 69 Tonight"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe06",
+        "word":  "Ate",
+        "meaning":  "Did something flawlessly; exceeded expectations.",
+        "origin":  "Originating in 2000s Black and LGBTQ+ ballroom culture as praise for someone who totally dominated, the term spread via social media into a slang meaning to do something exceptionally well.",
+        "tone":  "Praise / Hype",
+        "emotionalContext":  "Strong appreciation and admiration.",
+        "example":  [
+                        "“She ate that performance.”",
+                        "“You ate and left no crumbs!”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe24",
+        "word":  "Based",
+        "meaning":  "Confidently being yourself; unapologetically honest",
+        "origin":  "Hip-hop culture; revived in internet culture",
+        "tone":  "Approving, confident",
+        "emotionalContext":  "Admiration and respect for authenticity and boldness.",
+        "example":  [
+                        "“She stood by her opinion—based.”            “He didn’t follow the crowd and gave his own answer—based.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69d699910fcb164d5f02e4a0",
+        "word":  "Bastard",
+        "meaning":  "a person whose parents were not married to each other when they were born",
+        "tone":  "Hateful",
+        "example":  [
+                        "He is a bastard"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe1c",
+        "word":  "Bet",
+        "meaning":  "Okay/ agreed/ sounds good",
+        "origin":  "African American Vernacular English (AAVE); spread via TikTok \u0026 Twitter",
+        "tone":  "Confident, casual",
+        "emotionalContext":  "Expresses agreement, confidence, and readiness with enthusiasm.",
+        "example":  [
+                        "“Meet at 5?” → “Bet.”",
+                        "“You’ll help me revise tomorrow?” → “Bet.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefdfc",
+        "word":  "Brainrot",
+        "meaning":  "Obsessive overconsumption of a trend, show, or content.",
+        "origin":  "Meme culture.",
+        "tone":  "Funny / Addictive / Self-aware",
+        "emotionalContext":  "Playful but signals obsession or escapism.",
+        "example":  [
+                        "“I have K-drama brainrot.”",
+                        "“This song gave me brainrot.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe2c",
+        "word":  "Canon",
+        "meaning":  "Officially accepted or true in a context",
+        "origin":  "Fandom \u0026 pop-culture communities; Comes from literary and religious canon (a set of officially accepted works or truths), later adopted by fandom communities (e.g., movies, TV shows, comics) to refer to officially accepted storylines or facts within a fictional universe.",
+        "tone":  "Playful, approving",
+        "emotionalContext":  "Playful sense of authority, acceptance, or final truth",
+        "example":  [
+                        "“That explanation is canon now.”            “From now on, this method is canon for solving problems.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69d53607f2d15e54023a214b",
+        "word":  "Clock it",
+        "meaning":  "noticing, recognizing, or calling out a hidden truth",
+        "tone":  "Sassy",
+        "example":  [
+                        "I clocked that you changed your outfit"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefdfa",
+        "word":  "Code Switching (Online)",
+        "meaning":  "Changing personality, tone, or slang depending on the platform or group.",
+        "origin":  "“Code-switching” originated as a linguistics term describing alternating between languages or dialects in conversation, later expanding in social contexts to mean shifting speech, behavior, or style to fit different cultural or social settings.",
+        "tone":  "Observational / Social",
+        "emotionalContext":  "Reflects identity navigation and social pressure.",
+        "example":  [
+                        "“I code switch so hard between Insta and LinkedIn.”",
+                        "“His Discord personality vs real life is code switching.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe0c",
+        "word":  "Cooked",
+        "meaning":  "Being completely exhausted, overwhelmed, or\r\n in serious trouble, with little chance of\r\nrecovery.",
+        "origin":  "Derived from the phrase “your goose is cooked” (19th-century English), later \r\nshortened\r\nto “cooked” in sports and gaming slang, and spread through Gen Z social media.",
+        "tone":  "Defeated, dramatic, often humorous.",
+        "emotionalContext":  "Stress, burnout, resignation, frustration.",
+        "example":  [
+                        "\"With the exam today and no",
+                        "revision, I am cooked.\"",
+                        "\"After working all night, he felt",
+                        "completely cooked.\""
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe28",
+        "word":  "Core",
+        "meaning":  "Aesthetic or personality trait",
+        "origin":  "Emerged from internet aesthetic communities (Tumblr → Pinterest → TikTok), where suffixes like “-core” (e.g., cottagecore, normcore) were used to label distinct visual styles, moods, or subcultures. The suffix itself traces back to earlier terms like “hardcore”, where “core” implied a defining essence.",
+        "tone":  "Trendy, descriptive",
+        "emotionalContext":  "Fun and aesthetic",
+        "example":  [
+                        "“Late-night studying with coffee is so exam-core.”                                                   “Waking up early and studying in silence is totally focus-core.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe16",
+        "word":  "Cringe",
+        "meaning":  "Something that causes embarrassment or second-hand awkwardness.",
+        "origin":  "Derived from the verb “cringe”; adopted as slang through early internet and meme\r\nculture, later popularized by Gen Z.",
+        "tone":  "Judgmental, embarrassed.",
+        "emotionalContext":  "Awkwardness, discomfort, second-hand embarrassment.",
+        "example":  [
+                        "\"That joke was so cringe that no",
+                        "one laughed.\"",
+                        "\"Watching that video again feels cringe\"."
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefdfe",
+        "word":  "Deload",
+        "meaning":  "Taking a mental or social break to recover energy.",
+        "origin":  "Gym terminology adapted for mental health culture.",
+        "tone":  "Self-care / Calm",
+        "emotionalContext":  "Indicates burnout or need for rest.",
+        "example":  [
+                        "“I’m deloading from social media.”",
+                        "“Weekend is for deload mode.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe0a",
+        "word":  "Delulu",
+        "meaning":  "Being unrealistically hopeful or believing \r\nsomething unlikely, used in a humorous and self-aware\r\nway",
+        "origin":  "Shortened from delusional; first widely used in K-pop fandoms to\r\n joke about unrealistic fan beliefs,later popularized by Gen Z on tiktok",
+        "tone":  "Playful, ironic, self-mocking.",
+        "emotionalContext":  "Hopefulness, denial, optimism,\r\n light-hearted coping.",
+        "example":  [
+                        "\"I am delulu enough to think I will",
+                        "pass without much preparation.\"",
+                        "\"She stays delulu and keeps hoping",
+                        "for a miracle.\""
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefdf8",
+        "word":  "Ghosting",
+        "meaning":  "Suddenly disappearing from online communication.",
+        "origin":  "“Ghosting” comes from the word “ghost,” implying someone vanishing like a spirit, and emerged in dating culture to describe abruptly cutting off all communication without explanation.",
+        "tone":  "Hurt / Avoidant",
+        "emotionalContext":  "Often linked to emotional avoidance.",
+        "example":  [
+                        "“He digitally ghosted me.”",
+                        "“Why do people ghost instead of talking?”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe14",
+        "word":  "Goated",
+        "meaning":  "Extremely good; considered the best of all time.",
+        "origin":  "Derived from GOAT (Greatest Of All Time), later turned into slang as “goated” by Gen Z.",
+        "tone":  "Highly admiring, enthusiastic.",
+        "emotionalContext":  "Respect, praise, excitement.",
+        "example":  [
+                        "\"That professor’s teaching style",
+                        "is goated.\"",
+                        "\"Her performance in the",
+                        "competition was goated."
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe1e",
+        "word":  "High-key",
+        "meaning":  "Very/ openly/ strongly",
+        "origin":  "Internet evolution of “low-key”",
+        "tone":  "Emphatic",
+        "emotionalContext":  "Strongly emphasizes emotions",
+        "example":  [
+                        "“I high-key need this semester to end.”          “I high-key love this subject now.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe26",
+        "word":  "IYKYK",
+        "meaning":  "If You Know, You Know",
+        "origin":  "Social media shorthand",
+        "tone":  "Playful, insider",
+        "emotionalContext":  "Creates a sense of shared understanding or inside joke",
+        "example":  [
+                        "“That question was tricky… IYKYK.”        “That last question… IYKYK.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe20",
+        "word":  "It’s giving…",
+        "meaning":  "Describes a vibe or impression",
+        "origin":  "Rooted in African American Vernacular English (AAVE) and ballroom/drag culture (especially phrases like “it’s giving face/body”), later popularized widely through platforms like TikTok.",
+        "tone":  "Expressive, playful",
+        "emotionalContext":  "Playful, dramatic way to describe impressions or aesthetics.",
+        "example":  [
+                        "“This classroom decor? It’s giving creativity.” “That presentation? It’s giving professional vibes.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe18",
+        "word":  "Locked In",
+        "meaning":  "Completely focused and mentally committed.",
+        "origin":  "Borrowed from sports terminology, adopted into Gen Z academic and productivity\r\nslang.",
+        "tone":  "Serious, determined.",
+        "emotionalContext":  "Concentration, motivation, discipline.",
+        "example":  [
+                        "\"I am locked in for finals this",
+                        "week.\"",
+                        "\" Once he starts coding, he",
+                        "is fully locked in.\""
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefe00",
+        "word":  "Lore",
+        "meaning":  "Someone’s backstory, drama history, or personal narrative.",
+        "origin":  "Gaming storytelling term adopted socially.",
+        "tone":  "Curious / Playful",
+        "emotionalContext":  "Used humorously but relates to identity and experiences.",
+        "example":  [
+                        "“What’s the lore behind you two?”",
+                        "“I need the full friend group lore.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefdf4",
+        "word":  "Lowkey",
+        "meaning":  "Somewhat / secretly / subtly.",
+        "origin":  "“Low-key” originated from the musical and photography term describing soft, subdued tones, then moved into general English\r\nto mean restrained or understated before becoming slang for something kept subtle or not openly expressed.",
+        "tone":  "Casual / Soft",
+        "emotionalContext":  "Expresses mild or hidden feelings.",
+        "example":  [
+                        "“I lowkey like that song.”",
+                        "“I’m lowkey tired today.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe04",
+        "word":  "Main Character Energy",
+        "meaning":  "Acting confident, romanticizing life as if you’re the protagonist.",
+        "origin":  "As an internet meme and TikTok culture, where cinematic “POV” and life-as-a-movie trends framed people as the protagonist of their own story.",
+        "tone":  "Empowering / Dramatic / Fun",
+        "emotionalContext":  "Boosts confidence and self-focus.",
+        "example":  [
+                        "“Walking in the rain with main character energy.”",
+                        "“She radiates main character vibes.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe08",
+        "word":  "Mid",
+        "meaning":  "Average or unimpressive; not bad but not good either.",
+        "origin":  "Short for “middle,” used in hip-hop and online slang, later adopted by Gen Z.",
+        "tone":  "Dismissive, unimpressed.",
+        "emotionalContext":  "Disappointment, indifference.",
+        "example":  [
+                        "\"The movie everyone hyped was",
+                        "actually mid.\"",
+                        "\"His performance was",
+                        "mid compared to others.\""
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefdf0",
+        "word":  "NPC",
+        "meaning":  "Someone acting robotic, predictable, or lacking original thought.",
+        "origin":  "Gaming term (Non-Playable Character).",
+        "tone":  "Sarcastic / Mocking",
+        "emotionalContext":  "Can be used as social criticism or insult.",
+        "example":  [
+                        "“He just repeats trends like an NPC.”",
+                        "“Don’t be an NPC, think for yourself.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe1a",
+        "word":  "No cap",
+        "meaning":  "No lie/ \"I’m being serious\"",
+        "origin":  "African American Vernacular English (AAVE); popularized via hip-hop culture",
+        "tone":  "Casual, honest",
+        "emotionalContext":  "Honesty, sincerity",
+        "example":  [
+                        "“This app idea is actually genius, no cap.”     “I actually studied all night for this exam, no cap.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe0e",
+        "word":  "Rizz",
+        "meaning":  "Natural charm or flirting ability, especially in social \r\nor romantic situations.",
+        "origin":  "Shortened from “charisma,” popularized in early 2020s then spread widely through\r\nTikTok and Gen Z internet culture.",
+        "tone":  "Confident, admiring, sometimes playful.",
+        "emotionalContext":  "Confidence, attraction, admiration, social approval.",
+        "example":  [
+                        "\"He talked so smoothly during the presentation — pure rizz.\"",
+                        "\"She has the rizz to make everyone feel comfortable instantly.\""
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefe02",
+        "word":  "Situationship",
+        "meaning":  "A romantic connection without clear labels or commitment.",
+        "origin":  "Dating culture slang amplified by social media.",
+        "tone":  "Casual / Confusing / Vulnerable",
+        "emotionalContext":  "Often tied to emotional uncertainty or attachment stress.",
+        "example":  [
+                        "“We’re not dating, it’s a situationship.”",
+                        "“I’m tired of situationships.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefdf2",
+        "word":  "Slay",
+        "meaning":  "To do something exceptionally well or look amazing.",
+        "origin":  "LGBTQ+ ballroom culture; popularized through social media.",
+        "tone":  "Positive / Hype / Supportive",
+        "emotionalContext":  "Encouragement and empowerment.",
+        "example":  [
+                        "“You slayed that presentation!”",
+                        "“That outfit slays.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe2a",
+        "word":  "Soft launch",
+        "meaning":  "Subtly introducing something without announcing it",
+        "origin":  "Originally from marketing and product development, where companies release a product quietly to test it before a full launch. Later adopted by social media culture (especially Instagram) to mean subtly revealing something personal (like a relationship).",
+        "tone":  "Casual, intentional",
+        "emotionalContext":  "Subtle, strategic, and slightly secretive",
+        "example":  [
+                        "“They soft-launched the app with teaser posts.”                                                    “She soft-launched her project by posting sneak peeks.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe10",
+        "word":  "Sus",
+        "meaning":  "Suspicious, untrustworthy, or questionable behavior.",
+        "origin":  "Shortened form of “suspicious,” used earlier in informal English, but became\r\nmainstream after the game “Among Us” (2020), where players accused others of being\r\n“sus.”",
+        "tone":  "Doubtful, teasing, sometimes accusatory.",
+        "emotionalContext":  "Mistrust, curiosity, skepticism, alertness.",
+        "example":  [
+                        "\"He says he studied all night, but",
+                        "his answers are sus.\"",
+                        "\"That excuse sounds a bit sus to",
+                        "me.\""
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8248c7d4e3b7caefdf6",
+        "word":  "Touch Grass",
+        "meaning":  "Spend time offline; reconnect with reality.",
+        "origin":  "Gaming and online forum culture.",
+        "tone":  "Teasing / Sarcastic",
+        "emotionalContext":  "Can be humorous or dismissive depending on tone.",
+        "example":  [
+                        "“You’ve been gaming 10 hours, go touch grass.”",
+                        "“He needs to touch grass fr.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe22",
+        "word":  "W / L",
+        "meaning":  "W = Win; L = Loss",
+        "origin":  "Sports \u0026 gaming culture",
+        "tone":  "Casual, evaluative",
+        "emotionalContext":  "Quickly expresses success (W expresses pride/happiness) or failure (L expresses frustration/regret).",
+        "example":  [
+                        "“Getting extra marks is a W.”               “Finishing the assignment early is a W.” “Forgetting the submission deadline is an L.”"
+                    ],
+        "__v":  0
+    },
+    {
+        "_id":  "69ceb8258c7d4e3b7caefe12",
+        "word":  "Yapping",
+        "meaning":  "Talking excessively, often in an annoying or unnecessary way.",
+        "origin":  "From the verb “yap,” meaning to talk noisily; revived in Gen Z online slang through\r\nmemes and TikTok.",
+        "tone":  "Teasing, mildly critical.",
+        "emotionalContext":  "Annoyance, impatience, humor.",
+        "example":  [
+                        "\"He kept yapping during the",
+                        "lecture instead of listening.\"",
+                        "\"Stop yapping and get to the",
+                        "point.\""
+                    ],
+        "__v":  0
+    }
+]

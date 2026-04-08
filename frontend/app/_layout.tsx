@@ -1,5 +1,10 @@
 import { Stack } from "expo-router";
+import { ProgressProvider } from "./progressContext";
 
 export default function Layout() {
-  return <Stack screenOptions={{ headerShown: false }} />;
-}
+  return (
+    <ProgressProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </ProgressProvider>
+  );
+}

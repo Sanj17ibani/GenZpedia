@@ -13,6 +13,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
 import { fetchAllSlangs } from "./services/api";
+import { useProgress } from "./progressContext";
+const HARDCODED_QUIZ = [
+  { question: "What does 'GOAT' mean?", options: ["Worst player", "Greatest of all time", "Old person", "Random"], answer: 1 },
+  { question: "What does 'Cap' mean?", options: ["Hat", "Lie", "Truth", "Money"], answer: 1 },
+  { question: "What is 'Rizz'?", options: ["Style", "Charm", "Food", "Luck"], answer: 1 },
+  { question: "What does 'Sus' mean?", options: ["Suspicious", "Awesome", "Boring", "Fast"], answer: 0 },
+  { question: "What does 'Bet' mean?", options: ["Money", "No", "Okay/Agreed", "Stop"], answer: 2 }
+];
 
 const QUESTION_TIME = 10;
 
@@ -26,9 +34,10 @@ const mascotImages = {
 
 export default function QuizScreen() {
   const router = useRouter();
+  const { addXp, addGoalProgress } = useProgress();
 
-  const [questions, setQuestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [questions, setQuestions] = useState<any[]>(HARDCODED_QUIZ);
+  const [loading, setLoading] = useState(false);
   const [currentQ, setCurrentQ] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [lives, setLives] = useState(3);
@@ -48,48 +57,7 @@ export default function QuizScreen() {
   const popupOpacity = useRef(new Animated.Value(0)).current;
   const popupTranslateY = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const loadQuiz = async () => {
-      try {
-        const data = await fetchAllSlangs();
-        if (data && data.length > 0) {
-          const generated = data.map((slang: any) => {
-             const others = data.filter((d: any) => d._id !== slang._id);
-             const shuffledOthers = others.sort(() => 0.5 - Math.random()).slice(0, 3).map((d: any) => d.meaning);
-             while(shuffledOthers.length < 3) {
-                 shuffledOthers.push("A common gesture of " + Math.random().toString(36).substring(7));
-             }
-             const options = [...shuffledOthers, slang.meaning].sort(() => 0.5 - Math.random());
-             return {
-                 question: `What does '${slang.word}' mean?`,
-                 options: options,
-                 answer: options.indexOf(slang.meaning)
-             };
-          }).sort(() => 0.5 - Math.random()).slice(0, 5); // limit to 5 random questions
-          setQuestions(generated.length > 0 ? generated : [{
-            question: "What does 'GOAT' mean?",
-            options: ["Worst player", "Greatest of all time", "Old person", "Random"],
-            answer: 1
-          }]);
-        } else {
-            setQuestions([{
-                question: "What does 'GOAT' mean?",
-                options: ["Worst player", "Greatest of all time", "Old person", "Random"],
-                answer: 1
-            }]);
-        }
-      } catch (err) {
-        setQuestions([{
-            question: "What does 'GOAT' mean?",
-            options: ["Worst player", "Greatest of all time", "Old person", "Random"],
-            answer: 1
-        }]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadQuiz();
-  }, []);
+  // Dynamic fetching removed as per request.
 
   const progressPercent = useMemo(() => {
     if (questions.length === 0) return 0;
@@ -217,6 +185,7 @@ export default function QuizScreen() {
       setCurrentQ((prev) => prev + 1);
       resetForNextQuestion();
     } else {
+      addGoalProgress(25);
       setShowResult(true);
     }
   };
@@ -235,6 +204,7 @@ export default function QuizScreen() {
 
     setTimeout(() => {
       if (updatedLives <= 0) {
+        addGoalProgress(25);
         setGameOver(true);
       } else {
         moveToNextQuestion();
@@ -258,6 +228,7 @@ export default function QuizScreen() {
 
       const gainedXP = 10 + Math.max(0, newStreak - 1) * 5;
       setXp((prev) => prev + gainedXP);
+      addXp(gainedXP);
       showXPPopup(gainedXP);
 
       playSound(require("../assets/sounds/correct.mp3"));
@@ -276,6 +247,7 @@ export default function QuizScreen() {
       const updatedLives = isCorrect ? lives : lives - 1;
 
       if (updatedLives <= 0) {
+        addGoalProgress(25);
         setGameOver(true);
       } else {
         moveToNextQuestion();
@@ -400,7 +372,7 @@ export default function QuizScreen() {
         {loading || questions.length === 0 ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" color="#B8A4E3" />
-            <Text style={{marginTop: 10}}>Loading modules...</Text>
+            <Text style={{ marginTop: 10 }}>Loading modules...</Text>
           </View>
         ) : (
           <>
