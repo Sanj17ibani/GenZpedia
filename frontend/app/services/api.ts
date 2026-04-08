@@ -1,33 +1,6 @@
 import axios from 'axios';
-import { API_URL } from '../../config';
 
-const normalizeBaseUrl = (url?: string) => url?.trim().replace(/\/+$/, '');
-
-const CONFIGURED_API_URL = normalizeBaseUrl(API_URL);
-const LOCAL_FALLBACKS = [
-  'http://10.0.2.2:5001',
-  'http://localhost:5001',
-  'http://127.0.0.1:5001',
-  'http://10.0.2.2:5000',
-  'http://localhost:5000',
-  'http://127.0.0.1:5000',
-];
-
-const BASE_URL = CONFIGURED_API_URL || LOCAL_FALLBACKS[0];
-const REQUEST_HEADERS = {
-  'Content-Type': 'application/json',
-  'ngrok-skip-browser-warning': 'true',
-};
-
-const AUTH_BASE_URL_CANDIDATES = Array.from(
-  new Set(
-    [
-      CONFIGURED_API_URL,
-      BASE_URL,
-      ...(CONFIGURED_API_URL ? [] : LOCAL_FALLBACKS),
-    ].filter(Boolean)
-  )
-);
+const BASE_URL ='https://unsaddened-stylishly-maeve.ngrok-free.dev';
 
 export const apiClient = axios.create({
   baseURL: `${BASE_URL}/api`,
@@ -84,6 +57,7 @@ export const fetchAllSlangs = async () => {
   }
 };
 
+// POST slang
 export const contributeSlang = async (slangData: any) => {
   try {
     const response = await apiClient.post('/slang', slangData);
