@@ -165,7 +165,10 @@ export default function HomeScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.featureCard, styles.pinkCard]}>
+            <TouchableOpacity
+              style={[styles.featureCard, styles.pinkCard]}
+              onPress={() => router.push("/trending")}
+            >
               <Image
                 source={require("../assets/images/trending.png")}
                 style={styles.cardImage}
@@ -211,6 +214,19 @@ export default function HomeScreen() {
               </View>
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity 
+            style={styles.contributeBanner}
+            onPress={() => router.push("/crowdsource")}
+          >
+            <View style={styles.contributeBannerLeft}>
+              <Text style={styles.contributeBannerTitle}>Got a new slang?</Text>
+              <Text style={styles.contributeBannerSub}>Help the community grow!</Text>
+            </View>
+            <View style={styles.contributeBannerBtn}>
+              <Text style={styles.contributeBannerBtnText}>Contribute</Text>
+            </View>
+          </TouchableOpacity>
 
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Continue Learning</Text>
@@ -501,6 +517,55 @@ const styles = StyleSheet.create({
     color: "#333",
     flex: 1,
     marginRight: 8,
+  },
+
+  contributeBanner: {
+    backgroundColor: "#7EC4CF",
+    borderRadius: 16,
+    padding: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 26,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+
+  contributeBannerLeft: {
+    flex: 1,
+    marginRight: 10,
+  },
+
+  contributeBannerTitle: {
+    fontSize: 18,
+    fontWeight: "900",
+    color: "#0B4A53",
+    marginBottom: 4,
+  },
+
+  contributeBannerSub: {
+    fontSize: 12,
+    color: "#187888",
+    fontWeight: "600",
+  },
+
+  contributeBannerBtn: {
+    backgroundColor: "#ffffff",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+
+  contributeBannerBtnText: {
+    color: "#0B4A53",
+    fontWeight: "800",
+    fontSize: 13,
   },
 
   sectionHeader: {

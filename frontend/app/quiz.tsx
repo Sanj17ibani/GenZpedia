@@ -7,33 +7,12 @@ import {
   SafeAreaView,
   Image,
   Animated,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Audio } from "expo-av";
 import { useRouter } from "expo-router";
-
-const questions = [
-  {
-    question: "What does 'GOAT' mean?",
-    options: [
-      "Worst player",
-      "Greatest of all time",
-      "Old person",
-      "Random word",
-    ],
-    answer: 1,
-  },
-  {
-    question: "What does 'BRB' mean?",
-    options: ["Be right back", "Big red box", "Run fast", "No idea"],
-    answer: 0,
-  },
-  {
-    question: "What does 'SUS' mean?",
-    options: ["Suspicious", "Happy", "Sad", "Angry"],
-    answer: 0,
-  },
-];
+import { fetchAllSlangs } from "./services/api";
 
 const QUESTION_TIME = 10;
 
@@ -48,6 +27,8 @@ const mascotImages = {
 export default function QuizScreen() {
   const router = useRouter();
 
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentQ, setCurrentQ] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [lives, setLives] = useState(3);
@@ -67,11 +48,53 @@ export default function QuizScreen() {
   const popupOpacity = useRef(new Animated.Value(0)).current;
   const popupTranslateY = useRef(new Animated.Value(0)).current;
 
-  const question = questions[currentQ];
+  useEffect(() => {
+    const loadQuiz = async () => {
+      try {
+        const data = await fetchAllSlangs();
+        if (data && data.length > 0) {
+          const generated = data.map((slang: any) => {
+             const others = data.filter((d: any) => d._id !== slang._id);
+             const shuffledOthers = others.sort(() => 0.5 - Math.random()).slice(0, 3).map((d: any) => d.meaning);
+             while(shuffledOthers.length < 3) {
+                 shuffledOthers.push("A common gesture of " + Math.random().toString(36).substring(7));
+             }
+             const options = [...shuffledOthers, slang.meaning].sort(() => 0.5 - Math.random());
+             return {
+                 question: `What does '${slang.word}' mean?`,
+                 options: options,
+                 answer: options.indexOf(slang.meaning)
+             };
+          }).sort(() => 0.5 - Math.random()).slice(0, 5); // limit to 5 random questions
+          setQuestions(generated.length > 0 ? generated : [{
+            question: "What does 'GOAT' mean?",
+            options: ["Worst player", "Greatest of all time", "Old person", "Random"],
+            answer: 1
+          }]);
+        } else {
+            setQuestions([{
+                question: "What does 'GOAT' mean?",
+                options: ["Worst player", "Greatest of all time", "Old person", "Random"],
+                answer: 1
+            }]);
+        }
+      } catch (err) {
+        setQuestions([{
+            question: "What does 'GOAT' mean?",
+            options: ["Worst player", "Greatest of all time", "Old person", "Random"],
+            answer: 1
+        }]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuiz();
+  }, []);
 
   const progressPercent = useMemo(() => {
+    if (questions.length === 0) return 0;
     return ((currentQ + 1) / questions.length) * 100;
-  }, [currentQ]);
+  }, [currentQ, questions]);
 
   const playSound = async (file: any) => {
     try {
@@ -220,10 +243,10 @@ export default function QuizScreen() {
   };
 
   const handleSelect = (index: number) => {
-    if (selected !== null) return;
+    if (selected !== null || questions.length === 0) return;
 
     setSelected(index);
-
+    const question = questions[currentQ];
     const isCorrect = index === question.answer;
 
     if (isCorrect) {
@@ -374,57 +397,66 @@ export default function QuizScreen() {
           <Text style={styles.metaText}>🔥 x{streak}</Text>
         </View>
 
-        <View style={styles.questionSection}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.questionLabel}>
-              Question {currentQ + 1} / {questions.length}
-            </Text>
-            <Text style={styles.question}>{question.question}</Text>
+        {loading || questions.length === 0 ? (
+          <View style={styles.center}>
+            <ActivityIndicator size="large" color="#B8A4E3" />
+            <Text style={{marginTop: 10}}>Loading modules...</Text>
           </View>
+        ) : (
+          <>
+            <View style={styles.questionSection}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.questionLabel}>
+                  Question {currentQ + 1} / {questions.length}
+                </Text>
+                <Text style={styles.question}>{questions[currentQ].question}</Text>
+              </View>
 
-          <Animated.Image
-            source={mascotImages[mascotMood]}
-            style={[
-              styles.mascot,
-              {
-                transform: [
-                  { scale: scaleAnim },
-                  { translateY: translateY },
-                  { translateX: shakeAnim },
-                ],
-              },
-            ]}
-            resizeMode="contain"
-          />
-        </View>
+              <Animated.Image
+                source={mascotImages[mascotMood]}
+                style={[
+                  styles.mascot,
+                  {
+                    transform: [
+                      { scale: scaleAnim },
+                      { translateY: translateY },
+                      { translateX: shakeAnim },
+                    ],
+                  },
+                ]}
+                resizeMode="contain"
+              />
+            </View>
 
-        <View style={styles.optionsContainer}>
-          {question.options.map((opt, i) => {
-            let bgColor = "#fff";
-            let borderColor = "#E5D3F3";
+            <View style={styles.optionsContainer}>
+              {questions[currentQ].options.map((opt: any, i: number) => {
+                let bgColor = "#fff";
+                let borderColor = "#E5D3F3";
 
-            if (selected !== null) {
-              if (i === question.answer) {
-                bgColor = "#BFF3CD";
-                borderColor = "#4CAF50";
-              } else if (i === selected) {
-                bgColor = "#FFD2D2";
-                borderColor = "#E35D5D";
-              }
-            }
+                if (selected !== null) {
+                  if (i === questions[currentQ].answer) {
+                    bgColor = "#BFF3CD";
+                    borderColor = "#4CAF50";
+                  } else if (i === selected) {
+                    bgColor = "#FFD2D2";
+                    borderColor = "#E35D5D";
+                  }
+                }
 
-            return (
-              <TouchableOpacity
-                key={i}
-                style={[styles.option, { backgroundColor: bgColor, borderColor }]}
-                onPress={() => handleSelect(i)}
-                activeOpacity={0.9}
-              >
-                <Text style={styles.optionText}>{opt}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+                return (
+                  <TouchableOpacity
+                    key={i}
+                    style={[styles.option, { backgroundColor: bgColor, borderColor }]}
+                    onPress={() => handleSelect(i)}
+                    activeOpacity={0.9}
+                  >
+                    <Text style={styles.optionText}>{opt}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </>
+        )}
 
         <View style={styles.bottomHint}>
           <Text style={styles.bottomHintText}>
