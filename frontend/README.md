@@ -1,50 +1,64 @@
-# Welcome to your Expo app 👋
+# GenZpedia Mobile Setup
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This frontend is configured as an Expo app and can now be run on Android with either Expo Go or a standalone Android build.
 
-## Get started
+## Configure the API
 
-1. Install dependencies
+1. In `Backend/.env`, make sure the API listens on a public interface:
 
-   ```bash
-   npm install
+   ```env
+   PORT=5001
+   HOST=0.0.0.0
    ```
 
-2. Start the app
+2. Start the backend:
 
    ```bash
-   npx expo start
+   cd Backend
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+3. Expose the backend with ngrok:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   ```bash
+   ngrok http 5001
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+4. Copy the HTTPS forwarding URL from ngrok and place it in `frontend/.env`:
 
-## Get a fresh project
+   ```env
+   EXPO_PUBLIC_API_URL=https://your-ngrok-subdomain.ngrok-free.dev
+   ```
 
-When you're ready, run:
+## Run on Android
+
+For Expo Go:
 
 ```bash
-npm run reset-project
+cd frontend
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Scan the QR code from the Expo Go app on your Android phone.
 
-## Learn more
+For a local Android build:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+cd frontend
+npx expo run:android
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+For a shareable APK or AAB with EAS:
 
-## Join the community
+```bash
+cd frontend
+npx eas build -p android --profile preview
+```
 
-Join our community of developers creating universal apps.
+## Notes
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- The app reads `EXPO_PUBLIC_API_URL` for all API requests.
+- ngrok-specific requests include the `ngrok-skip-browser-warning` header.
+- Android package id: `com.genzpedia.app`
+- The backend health check is available at `/health`.

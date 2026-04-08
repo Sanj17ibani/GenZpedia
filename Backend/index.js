@@ -17,7 +17,34 @@ const cors = require('cors');
 const { getConnectionOptions, logMongoUriPlan } = require('./config/db');
 
 const requestLogger = require('./middleware/requestLogger');
+const HOST = process.env.HOST || '0.0.0.0';
 const PORT = Number(process.env.PORT) || 5000;
+
+function buildCorsOptions() {
+  const allowedOrigins = (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  if (allowedOrigins.length === 0) {
+    return {
+      origin: true,
+      credentials: true,
+    };
+  }
+
+  return {
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: true,
+  };
+}
 
 async function start() {
   const uri = process.env.MONGO_URI;
@@ -33,7 +60,7 @@ async function start() {
     `mongoose.connection.db.databaseName: ${mongoose.connection.db.databaseName}`
   );
   console.log(`Connected database name: ${mongoose.connection.name}`);
-  
+
   require('./models/userModel');
   require('./models/slangModel');
 
@@ -43,22 +70,30 @@ async function start() {
   const slangRoutes = require('./routes/slangRoutes');
 
   const app = express();
+  const corsOptions = buildCorsOptions();
 
-  app.use(cors());
+  app.set('trust proxy', true);
+  app.use(cors(corsOptions));
   app.use(express.json());
   app.use(requestLogger);
-  app.use((req, res, next) => {
-    console.log("👉 REQUEST HIT:", req.method, req.url);
-    next();
+
+  app.get('/health', (_req, res) => {
+    res.json({
+      ok: true,
+      host: HOST,
+      port: PORT,
+      timestamp: new Date().toISOString(),
+    });
   });
+
   app.use('/api/auth', authRoutes);
   app.use('/api/slang', slangRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
 
-  app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`Server listening on http://${HOST}:${PORT}`);
   });
 }
 
@@ -66,4 +101,4 @@ start().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-console.log(process.env.MONGO_URI);
+

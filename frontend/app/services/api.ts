@@ -1,26 +1,37 @@
 import axios from 'axios';
 import { API_URL } from '../../config';
 
-// Fallback to a localhost standard address if env isn't loaded (Note: Adjust to your machine's local IP for physical devices)
-const BASE_URL = API_URL || 'http://localhost:5001';
+const normalizeBaseUrl = (url?: string) => url?.trim().replace(/\/+$/, '');
+
+const CONFIGURED_API_URL = normalizeBaseUrl(API_URL);
+const LOCAL_FALLBACKS = [
+  'http://10.0.2.2:5001',
+  'http://localhost:5001',
+  'http://127.0.0.1:5001',
+  'http://10.0.2.2:5000',
+  'http://localhost:5000',
+  'http://127.0.0.1:5000',
+];
+
+const BASE_URL = CONFIGURED_API_URL || LOCAL_FALLBACKS[0];
+const REQUEST_HEADERS = {
+  'Content-Type': 'application/json',
+  'ngrok-skip-browser-warning': 'true',
+};
+
 const AUTH_BASE_URL_CANDIDATES = Array.from(
   new Set(
     [
-      API_URL,
+      CONFIGURED_API_URL,
       BASE_URL,
-      'http://localhost:5001',
-      'http://127.0.0.1:5001',
-      'http://localhost:5000',
-      'http://127.0.0.1:5000',
+      ...(CONFIGURED_API_URL ? [] : LOCAL_FALLBACKS),
     ].filter(Boolean)
   )
 );
 
 export const apiClient = axios.create({
   baseURL: `${BASE_URL}/api`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: REQUEST_HEADERS,
   timeout: 8000,
 });
 
@@ -30,9 +41,7 @@ const postWithFallback = async (path: string, payload: Record<string, unknown>) 
   for (const baseUrl of AUTH_BASE_URL_CANDIDATES) {
     try {
       const response = await axios.post(`${baseUrl}/api${path}`, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: REQUEST_HEADERS,
         timeout: 4000,
       });
 
@@ -73,7 +82,7 @@ export const fetchAllSlangs = async () => {
     console.error("Error fetching slangs:", error);
     throw error;
   }
-}
+};
 
 export const contributeSlang = async (slangData: any) => {
   try {
@@ -83,4 +92,4 @@ export const contributeSlang = async (slangData: any) => {
     console.error("Error contributing slang:", error);
     throw error;
   }
-}
+};
