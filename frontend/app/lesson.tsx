@@ -36,6 +36,7 @@ const lessonCards = [
     bg: "#CFE9DE",
     icon: "📚",
     bar: "#4FB08B",
+    route: "/slang101",
   },
   {
     title: "Tone & Context",
@@ -44,6 +45,7 @@ const lessonCards = [
     bg: "#E7D7EE",
     icon: "💬",
     bar: "#B07AE3",
+    route: "/tonecontext",
   },
   {
     title: "Spotting Red Flags",
@@ -52,6 +54,7 @@ const lessonCards = [
     bg: "#F6D7DD",
     icon: "🚩",
     bar: "#F06A7F",
+    route: "/reflags",
   },
   {
     title: "Emoji Decoder",
@@ -60,6 +63,7 @@ const lessonCards = [
     bg: "#F6E7B8",
     icon: "🤔",
     bar: "#F1B66C",
+    route: "/emoji-decoder",
   },
 ];
 
@@ -89,7 +93,6 @@ export default function LessonsScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* TOP STATS */}
           <View style={styles.statsRow}>
             <Image
               source={require("../assets/images/logo.png")}
@@ -117,7 +120,6 @@ export default function LessonsScreen() {
             </View>
           </View>
 
-          {/* HEADER */}
           <View style={styles.headerRow}>
             <View style={styles.profileLevelWrap}>
               <Image source={selectedProfileImage} style={styles.profileImage} />
@@ -141,16 +143,19 @@ export default function LessonsScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* TITLE */}
           <Text style={styles.pageTitle}>LESSONS</Text>
 
-          {/* LESSON CARDS */}
           <View style={styles.cardsWrap}>
             {lessonCards.map((item, index) => (
               <TouchableOpacity
                 key={index}
                 activeOpacity={0.85}
                 style={[styles.lessonCard, { backgroundColor: item.bg }]}
+                onPress={() => {
+                  if (item.route) {
+                    router.push(item.route as any);
+                  }
+                }}
               >
                 <View style={styles.lessonIconWrap}>
                   <Text style={styles.lessonIcon}>{item.icon}</Text>
@@ -179,7 +184,6 @@ export default function LessonsScreen() {
             ))}
           </View>
 
-          {/* CONTINUE LEARNING */}
           <View style={styles.continueHeader}>
             <Text style={styles.continueTitle}>Continue Learning</Text>
             <TouchableOpacity>
@@ -187,15 +191,19 @@ export default function LessonsScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity activeOpacity={0.85} style={styles.continueCard}>
+          <TouchableOpacity
+            activeOpacity={0.85}
+            style={styles.continueCard}
+            onPress={() => router.push("/slang101")}
+          >
             <View style={styles.continueLeft}>
               <View style={styles.continueImageBox}>
                 <Text style={styles.continueImageEmoji}>📝</Text>
               </View>
 
               <View style={styles.continueTextWrap}>
-                <Text style={styles.lessonNumber}>Lesson 3</Text>
-                <Text style={styles.continueCardTitle}>Slang Basics</Text>
+                <Text style={styles.lessonNumber}>Lesson 1</Text>
+                <Text style={styles.continueCardTitle}>Slang 101</Text>
 
                 <View style={styles.continueProgressRow}>
                   <View style={styles.continueTrack}>
@@ -206,13 +214,15 @@ export default function LessonsScreen() {
               </View>
             </View>
 
-            <TouchableOpacity style={styles.continueButton}>
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={() => router.push("/slang101")}
+            >
               <Text style={styles.continueButtonText}>Continue</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </ScrollView>
 
-        {/* BOTTOM NAV */}
         <View style={styles.bottomNav}>
           <TouchableOpacity
             style={styles.navItem}

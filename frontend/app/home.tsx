@@ -215,13 +215,15 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.contributeBanner}
             onPress={() => router.push("/crowdsource")}
           >
             <View style={styles.contributeBannerLeft}>
               <Text style={styles.contributeBannerTitle}>Got a new slang?</Text>
-              <Text style={styles.contributeBannerSub}>Help the community grow!</Text>
+              <Text style={styles.contributeBannerSub}>
+                Help the community grow!
+              </Text>
             </View>
             <View style={styles.contributeBannerBtn}>
               <Text style={styles.contributeBannerBtnText}>Contribute</Text>
@@ -274,7 +276,19 @@ export default function HomeScreen() {
             <Text style={styles.navText}>Dictionary</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem}>
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() =>
+              router.push({
+                pathname: "/leaderboard",
+                params: {
+                  name: String(name || "User"),
+                  gender: String(safeGender),
+                  avatarIndex: String(safeAvatarIndex),
+                },
+              })
+            }
+          >
             <Ionicons name="trophy-outline" size={22} color="#999" />
             <Text style={styles.navText}>Leaderboard</Text>
           </TouchableOpacity>
