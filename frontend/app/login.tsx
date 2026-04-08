@@ -59,7 +59,7 @@ export default function Login() {
     Alert.alert(
       "Login failed",
       isNetworkError
-        ? "Couldn't reach the backend. Make sure your server is running on port 5001."
+        ? "Couldn't reach the backend. Check that EXPO_PUBLIC_API_URL points to your ngrok URL or local API."
         : err?.response?.data?.message || "Invalid credentials"
     );
   } finally {

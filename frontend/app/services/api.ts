@@ -4,9 +4,7 @@ const BASE_URL ='https://unsaddened-stylishly-maeve.ngrok-free.dev';
 
 export const apiClient = axios.create({
   baseURL: `${BASE_URL}/api`,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: REQUEST_HEADERS,
   timeout: 8000,
 });
 
@@ -16,9 +14,7 @@ const postWithFallback = async (path: string, payload: Record<string, unknown>) 
   for (const baseUrl of AUTH_BASE_URL_CANDIDATES) {
     try {
       const response = await axios.post(`${baseUrl}/api${path}`, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: REQUEST_HEADERS,
         timeout: 4000,
       });
 
